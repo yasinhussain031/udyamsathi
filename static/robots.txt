@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://udyamsathi-neon.vercel.app/sitemap.xml
