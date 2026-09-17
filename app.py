@@ -156,11 +156,74 @@ def recommendations(margin, location, income):
     rows.sort(reverse=True)
     return [{'name':n,'capital':b['capital'],'revenue':b['revenue'],'score':round(s,1),'opportunity':b['opportunity']} for s,n,b in rows[:4]]
 
+def generic_business_profile(category, location, margin):
+    name = category.strip().title()
+    capital = max(margin * 10, 50000)
+
+    return {
+        "name": name,
+        "capital": capital,
+        "revenue": max(capital * 1.5, 75000),
+        "margin": 15,
+        "growth": 10,
+        "demand": 70,
+        "opportunity": f"{name} can serve customers in and around {location}, with demand depending on local population, accessibility, pricing, and competition.",
+        "strengths": [
+            "Can target nearby customers",
+            "Flexible pricing and service options",
+            "Can start at a small scale",
+            "Potential for repeat customers"
+        ],
+        "weaknesses": [
+            "Demand may vary by location",
+            "Limited starting capital",
+            "Customer acquisition may take time",
+            "Local competition can affect margins"
+        ],
+        "opportunities": [
+            "Expand into nearby villages and markets",
+            "Use WhatsApp and local referrals for promotion",
+            "Add complementary products or services",
+            "Reinvest profits to increase capacity"
+        ],
+        "threats": [
+            "Price competition",
+            "Changes in local demand",
+            "Input and operating cost increases",
+            "New competitors entering the area"
+        ],
+        "risks": [
+    ("Lower-than-expected customer demand", "Start small, validate demand locally, and build repeat customers."),
+    ("Higher operating costs", "Track expenses carefully and compare suppliers regularly."),
+    ("Slow initial customer growth", "Use local referrals, WhatsApp, and introductory offers to attract customers.")
+],
+        "channels": [
+            "Local walk-in customers",
+            "WhatsApp and social media",
+            "Village-level referrals",
+            "Nearby markets and institutions"
+        ],
+        "pricing": "Set prices according to local purchasing power, operating costs, competitor pricing, and a sustainable profit margin.",
+        "validation": "Speak with potential customers, compare nearby businesses, check local demand, and test the business on a small scale before investing heavily.",
+        "capital_fit": f"Available margin capital of ₹{margin:,.0f} can support an initial project size of approximately ₹{capital:,.0f}, subject to actual business requirements.",
+        "jobs": "Can create self-employment initially and potentially generate additional local employment as the business expands."
+    }
+
 def build_analysis(location, margin, income, category=None):
     lp=profile(location)
-    if category in BUSINESSES: selected=category; suggested=False
-    else: selected=recommendations(margin,location,income)[0]['name']; suggested=True
-    b=BUSINESSES[selected]; fin=finance(margin)
+    if category in BUSINESSES:
+        selected = category
+        suggested = False
+        b = BUSINESSES[selected]
+    elif category:
+        selected = category
+        suggested = False
+        b = generic_business_profile(category, location, margin)
+    else:
+        selected = recommendations(margin, location, income)[0]['name']
+        suggested = True
+        b = BUSINESSES[selected]
+    fin=finance(margin)
     affordability=max(35,min(100,(margin/max(b['capital']*.10,1))*100))
     fit=round(max(45,min(97, b['demand']*.35+b['growth']*.20+lp['market']*.18+lp['road']*.07+affordability*.20)))
     market=round(max(45,min(97,lp['market']*.55+b['demand']*.25+lp['road']*.10+lp['farm']*.10)))
