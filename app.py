@@ -16,7 +16,13 @@ def robots_txt():
 
 @app.route('/sitemap.xml')
 def sitemap_xml():
-    return send_from_directory('.', 'sitemap.xml', mimetype='application/xml')
+    return """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://udyamsathi-neon.vercel.app/</loc>
+    </url>
+</urlset>
+""", 200, {"Content-Type": "application/xml; charset=utf-8"}
 
 BUSINESSES = {
     'Dairy & Milk Products': {
